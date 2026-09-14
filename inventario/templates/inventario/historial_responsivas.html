@@ -1,46 +1,56 @@
 {% extends 'inventario/base.html' %}
 
-{% block title %}Historial de Responsivas{% endblock %}
-
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h2 class="h3 font-weight-bold mb-0">Historial de Responsivas Generadas</h2>
-        <p class="text-muted small">Evidencia documental de asignación de equipos de TI.</p>
+        <h3 class="fw-bold mb-1">Control de Equipos Asignados</h3>
+        <p class="text-muted small mb-0">Ubicación exacta y resguardantes de los equipos en uso.</p>
     </div>
+    <!-- Botón para regresar sin perderse -->
+    <a href="{% url 'lista_articulos' %}" class="btn btn-outline-secondary">
+        <i class="fa-solid fa-arrow-left me-2"></i>Volver al Inventario
+    </a>
 </div>
 
-<div class="card card-custom">
+<div class="card border-0 shadow-sm rounded-3">
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
+                <thead class="bg-light">
                     <tr>
                         <th class="ps-4">Folio</th>
-                        <th>Fecha</th>
-                        <th>Resguardante (Recibe)</th>
-                        <th>Departamento</th>
+                        <th>Resguardante / Ubicación</th>
+                        <th>Departamento / Puesto</th>
                         <th>Equipo Asignado</th>
-                        <th class="text-end pe-4">Documento</th>
+                        <th>Fecha Entrega</th>
+                        <th class="text-end pe-4">Evidencia</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for item in responsivas %}
+                    {% for resp in responsivas %}
                     <tr>
-                        <td class="ps-4 fw-bold text-primary">#{{ item.id }}</td>
-                        <td>{{ item.fecha_entrega|date:"d/m/Y H:i" }}</td>
-                        <td class="fw-bold">{{ item.recibe_nombre }}</td>
-                        <td>{{ item.recibe_departamento }}</td>
-                        <td>{{ item.articulo.nombre }} (<code>{{ item.articulo.codigo_patrimonial }}</code>)</td>
+                        <td class="ps-4 fw-bold text-primary">#{{ resp.id }}</td>
+                        <td>
+                            <div class="fw-bold"><i class="fa-solid fa-user me-2 text-secondary"></i>{{ resp.recibe_nombre }}</div>
+                        </td>
+                        <td>
+                            <div>{{ resp.recibe_departamento }}</div>
+                            <small class="text-muted">{{ resp.recibe_puesto }}</small>
+                        </td>
+                        <td>
+                            <div class="fw-bold">{{ resp.articulo.nombre }}</div>
+                            <small class="font-monospace text-muted">{{ resp.articulo.codigo_patrimonial }}</small>
+                        </td>
+                        <td><small>{{ resp.fecha_entrega|date:"d/m/Y H:i" }}</small></td>
                         <td class="text-end pe-4">
-                            <a href="{% url 'generar_pdf_responsiva' item.id %}" target="_blank" class="btn btn-outline-primary btn-sm">
-                                <i class="fa-solid fa-file-pdf me-1"></i> Reimprimir PDF
+                            <a href="{% url 'generar_pdf_responsiva' resp.id %}" target="_blank" class="btn btn-sm btn-danger">
+                                <i class="fa-solid fa-file-pdf me-1"></i> PDF Responsiva
                             </a>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6" class="text-center py-5 text-muted">No se han generado responsivas todavía.</td>
+                        <td colspan="6" class="text-center py-5 text-muted">No hay asignaciones registradas.</td>
                     </tr>
                     {% endfor %}
                 </tbody>

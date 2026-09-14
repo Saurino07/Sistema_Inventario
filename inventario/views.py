@@ -1,16 +1,26 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
-from .models import Articulo, Responsiva
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
+from .models import Articulo, Responsiva, Categoria
+from .forms import ArticuloForm
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 import io
 
+# Vista para cerrar sesión
+def cerrar_sesion(request):
+    logout(request)
+    return redirect('login')
+
 # VISTA 1: Lista de artículos e inventario
+@login_required
 def lista_articulos(request):
     articulos = Articulo.objects.all()
     return render(request, 'inventario/lista_articulos.html', {'articulos': articulos})
 
 # VISTA 2: Registrar Salida (Baja del stock) y Generar Responsiva
+@login_required
 def registrar_salida(request, articulo_id):
     articulo = get_object_or_404(Articulo, id=articulo_id)
 
@@ -43,6 +53,7 @@ def registrar_salida(request, articulo_id):
     return render(request, 'inventario/registrar_salida.html', {'articulo': articulo})
 
 # VISTA 3: Generación de archivo PDF dinámico usando ReportLab
+@login_required
 def generar_pdf_responsiva(request, responsiva_id):
     responsiva = get_object_or_404(Responsiva, id=responsiva_id)
 
@@ -94,6 +105,7 @@ def generar_pdf_responsiva(request, responsiva_id):
 from .forms import ArticuloForm
 
 # VISTA 4: Agregar nuevo artículo
+@login_required
 def crear_articulo(request):
     if request.method == 'POST':
         form = ArticuloForm(request.POST)
@@ -106,6 +118,7 @@ def crear_articulo(request):
     return render(request, 'inventario/form_articulo.html', {'form': form, 'titulo': 'Registrar Nuevo Artículo'})
 
 # VISTA 5: Editar artículo existente
+@login_required
 def editar_articulo(request, articulo_id):
     articulo = get_object_or_404(Articulo, id=articulo_id)
     if request.method == 'POST':
@@ -118,6 +131,7 @@ def editar_articulo(request, articulo_id):
     
     return render(request, 'inventario/form_articulo.html', {'form': form, 'titulo': f'Editar: {articulo.nombre}'})
 # VISTA 6: Historial de responsivas / entregas
+@login_required
 def historial_responsivas(request):
     responsivas = Responsiva.objects.all().order_by('-fecha_entrega')
     return render(request, 'inventario/historial_responsivas.html', {'responsivas': responsivas})

@@ -1,72 +1,62 @@
 {% extends 'inventario/base.html' %}
 
-{% block title %}Inventario de Artículos - TI{% endblock %}
-
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h2 class="h3 font-weight-bold mb-0">Control de Inventario</h2>
-        <p class="text-muted small">Gestión de altas, bajas y resguardos del departamento de TI.</p>
+        <h3 class="fw-bold mb-1">Inventario General</h3>
+        <p class="text-muted small mb-0">Listado de equipos registrados en el departamento.</p>
     </div>
-    <a href={% url 'crear_articulo' %} class="btn btn-success shadow-sm" target="_blank">
-        <i class="fa-solid fa-plus me-1"></i> Dar de Alta Nuevo Artículo
+    <a href="{% url 'crear_articulo' %}" class="btn btn-primary shadow-sm">
+        <i class="fa-solid fa-plus me-2"></i>Nuevo Artículo
     </a>
 </div>
 
-<!-- Tabla Principal -->
-<div class="card card-custom">
+<div class="card border-0 shadow-sm rounded-3">
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
+                <thead class="bg-light">
                     <tr>
                         <th class="ps-4">Código</th>
                         <th>Artículo</th>
                         <th>Marca / Modelo</th>
+                        <th>Serie</th>
                         <th>Stock</th>
-                        <th>Estado</th>
                         <th class="text-end pe-4">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for item in articulos %}
                     <tr>
-                        <td class="ps-4 fw-bold text-primary">{{ item.codigo_patrimonial }}</td>
+                        <td class="ps-4 font-monospace fw-bold text-primary">{{ item.codigo_patrimonial }}</td>
                         <td>
                             <div class="fw-bold">{{ item.nombre }}</div>
-                            <span class="text-muted small">{{ item.categoria.nombre }}</span>
+                            <small class="text-muted">{{ item.categoria.nombre }}</small>
                         </td>
                         <td>{{ item.marca }} {{ item.modelo }}</td>
-                        <td>
-                            <span class="fs-6 fw-semibold">{{ item.stock }}</span>
-                        </td>
+                        <td><small class="text-secondary">{{ item.numero_serie|default:"N/A" }}</small></td>
                         <td>
                             {% if item.stock > 0 %}
-                                <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-2">
-                                    <i class="fa-solid fa-circle-check me-1"></i> Disponible
-                                </span>
+                                <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill">{{ item.stock }} Disponibles</span>
                             {% else %}
-                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-3 py-2">
-                                    <i class="fa-solid fa-circle-xmark me-1"></i> Agotado / Asignado
-                                </span>
+                                <span class="badge bg-secondary-subtle text-secondary px-3 py-2 rounded-pill">Agotado</span>
                             {% endif %}
                         </td>
                         <td class="text-end pe-4">
+                            <!-- BOTONES DE EDITAR Y ASIGNAR -->
+                            <a href="{% url 'editar_articulo' item.id %}" class="btn btn-sm btn-outline-secondary me-1" title="Editar detalles">
+                                <i class="fa-solid fa-pen-to-square"></i> Editar
+                            </a>
                             {% if item.stock > 0 %}
-                                <a href="{% url 'registrar_salida' item.id %}" class="btn btn-outline-danger btn-sm shadow-sm">
-                                    <i class="fa-solid fa-file-signature me-1"></i> Dar de Baja / Entregar
+                                <a href="{% url 'registrar_salida' item.id %}" class="btn btn-sm btn-outline-primary" title="Asignar a empleado">
+                                    <i class="fa-solid fa-hand-holding me-1"></i> Asignar
                                 </a>
-                            {% else %}
-                                <button class="btn btn-secondary btn-sm" disabled>Sin Stock</button>
                             {% endif %}
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6" class="text-center py-5 text-muted">
-                            <i class="fa-solid fa-box-open fs-1 d-block mb-3"></i>
-                            No hay artículos registrados aún en el inventario.
-                        </td>
+                        <td colspan="6" class="text-center py-5 text-muted">No hay elementos registrados.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
