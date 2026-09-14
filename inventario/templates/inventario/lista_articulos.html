@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Inventario TI</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f4f6f9; }
+        h1 { color: #333; }
+        table { width: 100%; border-collapse: collapse; background: white; margin-top: 20px; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #007bff; color: white; }
+        .btn { padding: 6px 12px; background-color: #dc3545; color: white; text-decoration: none; border-radius: 4px; }
+        .btn:hover { background-color: #bd2130; }
+    </style>
+</head>
+<body>
+    <h1>Control de Inventario - Departamento de TI</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Marca/Modelo</th>
+                <th>Stock Disponible</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in articulos %}
+            <tr>
+                <td>{{ item.codigo_patrimonial }}</td>
+                <td>{{ item.nombre }}</td>
+                <td>{{ item.marca }} {{ item.modelo }}</td>
+                <td><strong>{{ item.stock }}</strong></td>
+                <td>{{ item.get_estado_display }}</td>
+                <td>
+                    {% if item.stock > 0 %}
+                        <a href="{% url 'registrar_salida' item.id %}" class="btn">Dar de Baja / Entregar</a>
+                    {% else %}
+                        <span>Sin Stock</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">No hay artículos registrados en la base de datos.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

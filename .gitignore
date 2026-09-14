@@ -1,0 +1,12 @@
+# Omitir entorno virtual
+env/
+
+# Omitir archivos temporales de Python
+*.pyc
+__pycache__/
+
+# Omitir configuraciones de VS Code
+.vscode/
+
+# Omitir la base de datos sqlite local (si existe)
+*.sqlite3
