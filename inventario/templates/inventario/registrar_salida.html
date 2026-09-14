@@ -1,48 +1,65 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Registrar Salida de Artículo</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f6f9; }
-        .form-card { background: white; padding: 25px; border-radius: 8px; max-width: 500px; margin: 0 auto; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input[type="text"], textarea { width: 100%; padding: 8px; box-sizing: border-box; }
-        button { background-color: #28a745; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; }
-    </style>
-</head>
-<body>
+{% extends 'inventario/base.html' %}
 
-<div class="form-card">
-    <h2>Registrar Salida de: {{ articulo.nombre }}</h2>
-    <p><strong>Código:</strong> {{ articulo.codigo_patrimonial }}</p>
+{% block title %}Registrar Salida de Equipo{% endblock %}
 
-    <form method="POST">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="recibe_nombre">Nombre de la persona que recibe:</label>
-            <input type="text" id="recibe_nombre" name="recibe_nombre" required>
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card card-custom p-4">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-4">
+                    <a href="{% url 'lista_articulos' %}" class="btn btn-light me-3">
+                        <i class="fa-solid fa-arrow-left"></i> Volver
+                    </a>
+                    <h3 class="card-title mb-0">Asignar Equipo y Generar Responsiva</h3>
+                </div>
+
+                <!-- Resumen del Equipo seleccionado -->
+                <div class="alert alert-info d-flex align-items-center mb-4" role="alert">
+                    <i class="fa-solid fa-circle-info fs-3 me-3"></i>
+                    <div>
+                        <strong>Equipo Seleccionado:</strong> {{ articulo.nombre }} ({{ articulo.marca }} {{ articulo.modelo }})<br>
+                        <small>Código Patrimonial: <code>{{ articulo.codigo_patrimonial }}</code> | Stock actual: <strong>{{ articulo.stock }}</strong></small>
+                    </div>
+                </div>
+
+                <!-- Formulario -->
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <h5 class="mb-3 text-secondary"><i class="fa-solid fa-user-tag me-2"></i>Datos del Resguardante (Quien recibe)</h5>
+                    
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="recibe_nombre" class="form-label font-weight-bold">Nombre Completo *</label>
+                            <input type="text" class="form-class form-control" id="recibe_nombre" name="recibe_nombre" placeholder="Ej: Juan Pérez Gómez" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="recibe_departamento" class="form-label">Departamento / Área *</label>
+                            <input type="text" class="form-control" id="recibe_departamento" name="recibe_departamento" placeholder="Ej: Contabilidad" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="recibe_puesto" class="form-label">Puesto o Cargo</label>
+                        <input type="text" class="form-control" id="recibe_puesto" name="recibe_puesto" placeholder="Ej: Auxiliar Administrativo">
+                    </div>
+
+                    <h5 class="mb-3 text-secondary"><i class="fa-solid fa-clipboard-list me-2"></i>Detalles de la Salida</h5>
+
+                    <div class="mb-4">
+                        <label for="motivo_salida" class="form-label">Motivo de la entrega / Observaciones *</label>
+                        <textarea class="form-control" id="motivo_salida" name="motivo_salida" rows="3" placeholder="Ej: Asignación de equipo por nuevo ingreso al departamento." required></textarea>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+                            <i class="fa-solid fa-file-pdf me-2"></i> Descontar del Inventario y Generar PDF
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-
-        <div class="form-group">
-            <label for="recibe_departamento">Departamento / Área:</label>
-            <input type="text" id="recibe_departamento" name="recibe_departamento" required>
-        </div>
-
-        <div class="form-group">
-            <label for="recibe_puesto">Puesto:</label>
-            <input type="text" id="recibe_puesto" name="recibe_puesto">
-        </div>
-
-        <div class="form-group">
-            <label for="motivo_salida">Motivo / Observaciones:</label>
-            <textarea id="motivo_salida" name="motivo_salida" rows="3" required></textarea>
-        </div>
-
-        <button type="submit">Generar Responsiva PDF y Procesar Salida</button>
-    </form>
+    </div>
 </div>
-
-</body>
-</html>
+{% endblock %}
