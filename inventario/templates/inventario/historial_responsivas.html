@@ -1,0 +1,51 @@
+{% extends 'inventario/base.html' %}
+
+{% block title %}Historial de Responsivas{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="h3 font-weight-bold mb-0">Historial de Responsivas Generadas</h2>
+        <p class="text-muted small">Evidencia documental de asignación de equipos de TI.</p>
+    </div>
+</div>
+
+<div class="card card-custom">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Folio</th>
+                        <th>Fecha</th>
+                        <th>Resguardante (Recibe)</th>
+                        <th>Departamento</th>
+                        <th>Equipo Asignado</th>
+                        <th class="text-end pe-4">Documento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in responsivas %}
+                    <tr>
+                        <td class="ps-4 fw-bold text-primary">#{{ item.id }}</td>
+                        <td>{{ item.fecha_entrega|date:"d/m/Y H:i" }}</td>
+                        <td class="fw-bold">{{ item.recibe_nombre }}</td>
+                        <td>{{ item.recibe_departamento }}</td>
+                        <td>{{ item.articulo.nombre }} (<code>{{ item.articulo.codigo_patrimonial }}</code>)</td>
+                        <td class="text-end pe-4">
+                            <a href="{% url 'generar_pdf_responsiva' item.id %}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                <i class="fa-solid fa-file-pdf me-1"></i> Reimprimir PDF
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">No se han generado responsivas todavía.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

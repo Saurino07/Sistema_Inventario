@@ -90,3 +90,34 @@ def generar_pdf_responsiva(request, responsiva_id):
 
     buffer.seek(0)
     return HttpResponse(buffer, content_type='application/pdf')
+
+from .forms import ArticuloForm
+
+# VISTA 4: Agregar nuevo artículo
+def crear_articulo(request):
+    if request.method == 'POST':
+        form = ArticuloForm(request.POST)
+        if form.is_valid():
+            form.save() # Guarda el nuevo artículo en PostgreSQL
+            return redirect('lista_articulos')
+    else:
+        form = ArticuloForm()
+    
+    return render(request, 'inventario/form_articulo.html', {'form': form, 'titulo': 'Registrar Nuevo Artículo'})
+
+# VISTA 5: Editar artículo existente
+def editar_articulo(request, articulo_id):
+    articulo = get_object_or_404(Articulo, id=articulo_id)
+    if request.method == 'POST':
+        form = ArticuloForm(request.POST, instance=articulo)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_articulos')
+    else:
+        form = ArticuloForm(instance=articulo)
+    
+    return render(request, 'inventario/form_articulo.html', {'form': form, 'titulo': f'Editar: {articulo.nombre}'})
+# VISTA 6: Historial de responsivas / entregas
+def historial_responsivas(request):
+    responsivas = Responsiva.objects.all().order_by('-fecha_entrega')
+    return render(request, 'inventario/historial_responsivas.html', {'responsivas': responsivas})
